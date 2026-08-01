@@ -12,5 +12,25 @@
   <button id="add">追加</button>
 
   <ul id="list"></ul>
+
+<script>
+  const entry = document.getElementById('entry');
+  const list = document.getElementById('list');
+
+  function addTask(text) {
+    const name = text.trim();
+    if (!name) return;
+    const item = document.createElement('li');
+    item.textContent = name;
+    list.appendChild(item);
+    entry.value = '';
+    entry.focus();
+  }
+
+  document.getElementById('add').addEventListener('click', () => addTask(entry.value));
+  entry.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addTask(entry.value);
+  });
+</script>
 </body>
 </html>
