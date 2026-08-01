@@ -40,9 +40,15 @@
   }
 
   h1 {
-    margin: 0 0 24px;
+    margin: 0 0 6px;
     font-size: 26px;
     letter-spacing: 0.02em;
+  }
+
+  .count {
+    margin: 0 0 24px;
+    color: var(--ink-soft);
+    font-size: 15px;
   }
 
   .row { display: flex; gap: 10px; }
@@ -83,12 +89,41 @@
   }
 
   li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     padding: 14px 4px;
     border-bottom: 1px solid var(--line);
     font-size: 17px;
   }
 
   li:last-child { border-bottom: none; }
+
+  li input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex: none;
+  }
+
+  li span { flex: 1; }
+
+  li.done span {
+    color: var(--ink-soft);
+    text-decoration: line-through;
+  }
+
+  .remove {
+    padding: 4px 10px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 1px solid var(--line);
+  }
+
+  .remove:hover { color: var(--accent); border-color: var(--accent); }
 
   .empty {
     margin-top: 24px;
@@ -103,6 +138,7 @@
 <body>
   <div class="sheet">
     <h1>やることリスト</h1>
+    <p class="count" id="count">おわった: 0 / 0</p>
 
     <div class="row">
       <input id="entry" type="text" placeholder="やることを入力">
@@ -114,23 +150,72 @@
   </div>
 
 <script>
+  const STORAGE_KEY = 'todo-demo';
+
   const entry = document.getElementById('entry');
   const list = document.getElementById('list');
   const empty = document.getElementById('empty');
+  const count = document.getElementById('count');
 
-  function refresh() {
-    empty.style.display = list.children.length ? 'none' : 'block';
+  let tasks = load();
+
+  function load() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }
+
+  function render() {
+    list.textContent = '';
+
+    tasks.forEach((task, index) => {
+      const item = document.createElement('li');
+      if (task.done) item.classList.add('done');
+
+      const check = document.createElement('input');
+      check.type = 'checkbox';
+      check.checked = task.done;
+      check.addEventListener('change', () => {
+        tasks[index].done = check.checked;
+        save();
+        render();
+      });
+
+      const label = document.createElement('span');
+      label.textContent = task.name;
+
+      const remove = document.createElement('button');
+      remove.className = 'remove';
+      remove.textContent = '消す';
+      remove.addEventListener('click', () => {
+        tasks.splice(index, 1);
+        save();
+        render();
+      });
+
+      item.append(check, label, remove);
+      list.appendChild(item);
+    });
+
+    const done = tasks.filter((task) => task.done).length;
+    count.textContent = 'おわった: ' + done + ' / ' + tasks.length;
+    empty.style.display = tasks.length ? 'none' : 'block';
   }
 
   function addTask(text) {
     const name = text.trim();
     if (!name) return;
-    const item = document.createElement('li');
-    item.textContent = name;
-    list.appendChild(item);
+    tasks.push({ name: name, done: false });
+    save();
+    render();
     entry.value = '';
     entry.focus();
-    refresh();
   }
 
   document.getElementById('add').addEventListener('click', () => addTask(entry.value));
@@ -138,7 +223,7 @@
     if (e.key === 'Enter') addTask(entry.value);
   });
 
-  refresh();
+  render();
 </script>
 </body>
 </html>
