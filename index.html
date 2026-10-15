@@ -6,14 +6,32 @@
 <title>やることリスト</title>
 <style>
   :root {
-    --bg: #1b1030;
-    --card: #2a1a45;
-    --ink: #f3e9ff;
-    --ink-soft: #a897c4;
-    --line: #473066;
-    --accent: #ff8a1f;
-    --accent-soft: #3a2457;
+    --bg: #0f2b1f;
+    --card: #17402c;
+    --ink: #fff8ec;
+    --ink-soft: #b9cdbd;
+    --line: #2f5f47;
+    --accent: #e8433f;
+    --accent-soft: #24523b;
     --radius: 16px;
+  }
+
+  html::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle, #fff 1.5px, transparent 2px),
+      radial-gradient(circle, #fff 1px, transparent 1.5px);
+    background-size: 90px 90px, 55px 55px;
+    background-position: 0 0, 20px 30px;
+    opacity: 0.55;
+    animation: snow 12s linear infinite;
+  }
+
+  @keyframes snow {
+    to { background-position: 30px 90px, -10px 85px; }
   }
 
   body::before,
@@ -24,8 +42,8 @@
     pointer-events: none;
     animation: float 4s ease-in-out infinite;
   }
-  body::before { content: "🦇"; left: 8%; }
-  body::after { content: "👻"; right: 8%; animation-delay: -2s; }
+  body::before { content: "🎅"; left: 8%; }
+  body::after { content: "⛄"; right: 8%; animation-delay: -2s; }
 
   @keyframes float {
     0%, 100% { transform: translateY(0) rotate(-4deg); }
@@ -33,11 +51,11 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    body::before, body::after { animation: none; }
+    body::before, body::after, html::before { animation: none; }
   }
 
-  h1::before { content: "🎃 "; }
-  h1::after { content: " 🕸️"; }
+  h1::before { content: "🎄 "; }
+  h1::after { content: " ⭐"; }
 
   * { box-sizing: border-box; }
 
@@ -59,7 +77,7 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 32px 28px;
-    box-shadow: 0 0 32px rgba(255, 138, 31, 0.25);
+    box-shadow: 0 0 32px rgba(232, 67, 63, 0.3);
   }
 
   h1 {
